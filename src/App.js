@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import Api from './services/api'
-
-import './App.css'
+import Axios from 'axios'
 
 import Navbar from './components/navbar'
-import WorkList from './components/workList'
+import List from './components/list'
+
+import './App.css'
 
 const Config = require('./config.json')
 
@@ -14,18 +14,22 @@ class App extends Component {
 
     this.state = {
       user: {},
-      repos: []
+      repos: [],
+      forks: []
     }
 
     this.loadData()
   }
 
-  async loadData() {
-    const responseUser = await Api.get(`/users/${Config.username}`)
-    const responseRepos = await Api.get(`/users/${Config.username}/repos`)
+  loadData = async () => {
+    const response = await Axios.all([
+      Axios.get(`https://api.github.com/users/${Config.username}`),
+      Axios.get(`https://api.github.com/users/${Config.username}/repos`)
+    ])
 
-    this.setState({ user: responseUser.data })
-    this.setState({ repos: responseRepos.data })
+    const [ responseUser, responseRepos ] = response
+
+    this.setState({ user: responseUser.data, repos: responseRepos.data })
   }
 
   render() {
@@ -38,8 +42,6 @@ class App extends Component {
       loader = <div className="loading-page loading-success"><span className="loader"></span></div>
     }
 
-    console.log(Config.background_image)
-
     return (
       <div className="App" style={{ backgroundImage: `url(${Config.background_image})` }}>
         {loader}
@@ -47,7 +49,7 @@ class App extends Component {
         <Navbar user={state.user} />
         
         <main className="site-body">
-          <WorkList repos={state.repos} />
+          <List title="Repositories." repos={state.repos} />
         </main>
       </div>
     );

@@ -16,7 +16,17 @@ class Navbar extends Component {
                     <i className="far fa-user-circle" /> {props.user.login}
                 </a>
 
-                <p className="user-location"><i className="fas fa-map-marker-alt" /> {props.user.location}</p>
+                {typeof props.user.company === 'string' ?
+                    <p className="user-location"><i className="fas fa-building" /> {props.user.company}</p> : ''
+                }
+
+                {typeof props.user.email === 'string' ?
+                    <p className="user-location"><i className="fas fa-envelope" /> {props.user.email}</p> : ''
+                }
+
+                {typeof props.user.location === 'string' ?
+                    <p className="user-location"><i className="fas fa-map-marker-alt" /> {props.user.location}</p> : ''
+                }                
             </div>
         )
     }
